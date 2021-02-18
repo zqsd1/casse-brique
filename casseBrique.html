@@ -1,0 +1,33 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>casse brique</title>
+    <script src="casseBrique.js"></script>
+</head>
+<body onload="draw()">
+    <canvas id="canvas" height="800" width="600" 
+    style="background-color: lightgrey;"></canvas>
+
+    <canvas id="canvasId" width="500" height="200" style="float: right;"></canvas>
+    <script>
+      let canvas = document.getElementById('canvasId');
+      let context = canvas.getContext('2d');
+      context.beginPath();
+      context.moveTo(180, 90);
+      context.bezierCurveTo(120, 90, 120, 160, 240, 160);
+      context.bezierCurveTo(260, 190, 300, 170, 350, 150);
+      context.bezierCurveTo(410, 140, 440, 130, 380, 110);
+      context.bezierCurveTo(440, 50, 350, 40, 350, 50);
+      context.bezierCurveTo(310, 10, 270, 30, 240, 40);
+      context.bezierCurveTo(310, 10, 130, 15, 180, 90);
+      // complete custom shape
+      context.closePath();
+      context.lineWidth = 7;
+      context.strokeStyle = 'green';
+      context.stroke();
+    </script>
+    
+</body>
+</html>
