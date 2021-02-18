@@ -41,13 +41,40 @@ document.addEventListener("keydown", keydown);
 function keydown(event, opt) {
     console.log(event);
     if (event.code == "Space") {
+        event.preventDefault();
         var canvas = document.getElementById("canvas");
         if (canvas.getContext) {
             var ctx = canvas.getContext("2d");
 
-            ctx.fillStyle = "green";
-            ctx.fillRect(50, 100, 100, 5);
+             ctx.save();
+             ctx.fillStyle = "green";
+             ctx.fillRect(50, 100, 100, 5);
 
+             ctx.restore();
+            
+            ctx.save();
+            ctx.fillStyle = 'rgba(200, 0, 200, 0.5)';
+            ctx.fillRect(150, 300, 100, 50);
+            ctx.restore();
+            ctx.save();
+            
+            
+            ctx.rotate(5 * Math.PI / 180);//la rotate se fait par rapport à l'origine (0,0) du canvas
+            ctx.fillRect(150, 300, 100, 50);
+
+            ctx.restore();
+            ctx.translate(150,300);//translate change l'origine (0,0)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.fillRect(0,0,20,20);
+            ctx.rotate(20*Math.PI/180);
+            ctx.fillRect(0,0,40,40);
+
+            //prend l'origine précendente pour aller à une nouvelle 
+            //rotate influ sur l'axe x/y
+            ctx.translate(100,100);
+
+            ctx.fillStyle="red";
+            ctx.fillRect(0,0,50,50);
 
         }
     }
