@@ -3,7 +3,7 @@ var balle = {
     posY : 100,
     radius:50,
     couleur : "purple",
-    direction : "left",
+    direction : "down",
     
 
 }
@@ -24,7 +24,7 @@ function draw(balle) {
 
 draw(balle);
 
-window.setInterval(bouger,300,balle);
+window.setInterval(bouger,200,balle);
 function bouger(balle) {
     draw(balle)
     if (balle.direction =="left") {
@@ -48,6 +48,28 @@ function bouger(balle) {
         else
         {
             balle.posX -= 10;
+        }
+    }
+    if (balle.direction =="up") {
+        if (balle.posY - balle.radius <= 0) {
+            balle.direction = "down";
+            balle.posY += 10;
+            
+        }
+        else
+        {
+            balle.posY -= 10;
+        }
+    }
+    if (balle.direction =="down") {
+        if (balle.posY + balle.radius >= document.getElementById("canvas").height) {
+            balle.direction = "up";
+            balle.posY -= 10;
+            
+        }
+        else
+        {
+            balle.posY += 10;
         }
     }
 
