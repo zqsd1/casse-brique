@@ -11,19 +11,20 @@ var balle = {
 }
 
 var briques = [
-    new Brique(0, 0)
+    new Brique(20, 0)
 ]
 
 function Brique(posX, posY) {
     this.height = 50;
-    this.width = 50;
+    this.width = this.height*Math.sqrt(2);
     this.couleur = "red";
     this.posX = posX;
     this.posY = posY;
 }
 
+draw();
 
-function draw(balle) {
+function draw() {
     var canvas = document.getElementById("canvas");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
@@ -39,8 +40,7 @@ function draw(balle) {
 
 }
 
-draw(balle);
-function drawBriques(params) {
+function drawBriques() {
     var canvas = document.getElementById("canvas");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
@@ -52,17 +52,7 @@ function drawBriques(params) {
     }
 }
 window.requestAnimationFrame(bouger);
-function drawBriques(params) {
-    var canvas = document.getElementById("canvas");
-    if (canvas.getContext) {
-        var ctx = canvas.getContext("2d");
-        briques.forEach(element => {
-            ctx.fillStyle = element.couleur;
-            ctx.fillRect(element.posX, element.posY, element.width, element.height);
-        });
 
-    }
-}
 //window.setInterval(bouger, 200, balle);
 function bouger() {
     draw()
