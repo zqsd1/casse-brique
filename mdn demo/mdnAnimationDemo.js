@@ -164,3 +164,47 @@ function clock() {
 }
 
 
+var canvas3 = document.getElementById('canvas3');
+var ctx2 = canvas3.getContext('2d');
+
+var raf;
+
+var ball = {
+  x: 100,
+  y: 100,
+  vx: 5,
+  vy: 2,
+  radius: 25,
+  color: 'blue',
+  draw: function() {
+    ctx2.beginPath();
+    ctx2.arc(this.x, this.y, this.radius, 0, Math.PI * 2, true);
+    ctx2.fillStyle = this.color;
+    ctx2.closePath();
+    ctx2.fill();
+  }
+};
+
+function draw1() {
+  ctx2.clearRect(0,0, canvas3.width, canvas3.height);
+  ball.draw();
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+  raf = window.requestAnimationFrame(draw1);
+  if (ball.y + ball.vy > canvas3.height || ball.y + ball.vy < 0) {
+    ball.vy = -ball.vy;
+  }
+  if (ball.x + ball.vx > canvas3.width || ball.x + ball.vx < 0) {
+    ball.vx = -ball.vx;
+  }
+}
+
+canvas3.addEventListener('mouseover', function(e) {
+  raf = window.requestAnimationFrame(draw1);
+});
+
+canvas3.addEventListener('mouseout', function(e) {
+  window.cancelAnimationFrame(raf);
+});
+
+ball.draw();
