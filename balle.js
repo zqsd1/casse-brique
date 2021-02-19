@@ -10,7 +10,20 @@ var balle = {
 
 }
 
-function draw() {
+var briques = [
+    new Brique(0, 0)
+]
+
+function Brique(posX, posY) {
+    this.height = 50;
+    this.width = 50;
+    this.couleur = "red";
+    this.posX = posX;
+    this.posY = posY;
+}
+
+
+function draw(balle) {
     var canvas = document.getElementById("canvas");
     if (canvas.getContext) {
         var ctx = canvas.getContext("2d");
@@ -20,12 +33,36 @@ function draw() {
         ctx.fillStyle = balle.couleur;
         ctx.fill();
 
+        drawBriques();
+
     }
 
 }
 
 draw(balle);
+function drawBriques(params) {
+    var canvas = document.getElementById("canvas");
+    if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+        briques.forEach(element => {
+            ctx.fillStyle = element.couleur;
+            ctx.fillRect(element.posX, element.posY, element.width, element.height);
+        });
+
+    }
+}
 window.requestAnimationFrame(bouger);
+function drawBriques(params) {
+    var canvas = document.getElementById("canvas");
+    if (canvas.getContext) {
+        var ctx = canvas.getContext("2d");
+        briques.forEach(element => {
+            ctx.fillStyle = element.couleur;
+            ctx.fillRect(element.posX, element.posY, element.width, element.height);
+        });
+
+    }
+}
 //window.setInterval(bouger, 200, balle);
 function bouger() {
     draw()
@@ -38,6 +75,7 @@ function bouger() {
     if (balle.posY + balle.radius >= document.getElementById("canvas").height 
     || balle.posY - balle.radius <=0) {
         balle.vitesseY = -balle.vitesseY;
+        
     }
 
     window.requestAnimationFrame(bouger);
