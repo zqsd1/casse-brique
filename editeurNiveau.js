@@ -44,16 +44,33 @@ function clickMouse(params) {
         //le numero de la brique clicqué    
         var positionXBrique = Math.trunc(clicX / largeurBrique);
         var positionYBrique = Math.trunc(clicY / hauteurBrique);
-        ctx.fillRect(positionXBrique * largeurBrique, positionYBrique * hauteurBrique, largeurBrique, hauteurBrique);
 
-        briques.push(new Brique(positionXBrique, positionYBrique));
+        //cherche si y'a une brique dans la case cliké
+        var dejaBrique = briques.findIndex((elem, ind, arr) => elem.posX == positionXBrique && elem.posY == positionYBrique);
+        //clic gauche
+        if (params.button == 0) {
+            //add la brique
+            if (dejaBrique == -1) {
+                ctx.fillRect(positionXBrique * largeurBrique, positionYBrique * hauteurBrique, largeurBrique, hauteurBrique);
+                briques.push(new Brique(positionXBrique, positionYBrique));
+            }
+        }
+
+        //clic droit
+        if (params.button == 2) {
+            //si y'a une brique on la vire
+            if (dejaBrique != -1) {
+                briques.splice(dejaBrique, 1);
+                ctx.clearRect(positionXBrique * largeurBrique, positionYBrique * hauteurBrique, largeurBrique, hauteurBrique);
+                ctx.strokeRect(positionXBrique * largeurBrique, positionYBrique * hauteurBrique, largeurBrique, hauteurBrique);
+            }
+        }
+
 
         //converti le tableau pour que ça soit lisible en html
-        //TODO 1seul par position
-        //TODO effacer brique clic droit ou reclic gauche ?
         var tmp = JSON.stringify(briques);
         document.getElementById("briquesOutput").innerHTML = tmp;
-      
+
 
 
 
@@ -63,9 +80,9 @@ function clickMouse(params) {
         //offset recup la position dans l'element choisi
         // client meme chose pour l'element window
         //page a partir du document
-        
+
         //mouse event attribut : https://www.w3schools.com/jsref/obj_mouseevent.asp
-        
+
         // //pas décallé
         // ctx.fillRect(params.offsetX, params.offsetY, 10, 10);
         // ctx.fillStyle = 'rgba(0,0,200,0.5)';
