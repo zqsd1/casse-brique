@@ -1,20 +1,21 @@
 var balle = {
-    posX: 100,
-    posY: 100,
+    posX: 150,
+    posY: 150,
     radius: 10,
     couleur: "purple",
     direction: "down",
-    vitesseX: 2,
-    vitesseY: 0
+    vitesseX: 1,
+    vitesseY: 1
 
 
 }
 
 var nbBriqueX = 15;
-var nbBriqueY = 15
-var zoneY = 0.5;
+var nbBriqueY = 30
+var zoneY = 1;
 var lvl1 = [{ "posX": 8, "posY": 1 }, { "posX": 6, "posY": 1 }, { "posX": 6, "posY": 3 }, { "posX": 8, "posY": 3 }, { "posX": 10, "posY": 3 }, { "posX": 10, "posY": 1 }, { "posX": 8, "posY": 6 }, { "posX": 4, "posY": 8 }, { "posX": 1, "posY": 6 }, { "posX": 1, "posY": 12 }, { "posX": 10, "posY": 10 }, { "posX": 12, "posY": 10 }, { "posX": 13, "posY": 6 }, { "posX": 13, "posY": 2 }]
-
+var lvl2 =
+    [{ "posX": 1, "posY": 3 }, { "posX": 2, "posY": 3 }, { "posX": 3, "posY": 3 }, { "posX": 4, "posY": 3 }, { "posX": 5, "posY": 3 }, { "posX": 6, "posY": 3 }, { "posX": 7, "posY": 3 }, { "posX": 8, "posY": 3 }, { "posX": 9, "posY": 3 }, { "posX": 10, "posY": 3 }, { "posX": 11, "posY": 3 }, { "posX": 11, "posY": 4 }, { "posX": 11, "posY": 5 }, { "posX": 11, "posY": 6 }, { "posX": 11, "posY": 7 }, { "posX": 11, "posY": 8 }, { "posX": 10, "posY": 8 }, { "posX": 9, "posY": 8 }, { "posX": 6, "posY": 8 }, { "posX": 4, "posY": 8 }, { "posX": 5, "posY": 8 }, { "posX": 2, "posY": 8 }, { "posX": 1, "posY": 8 }]
 function niveau(lvl) {
     lvl.forEach(element => {
         briques.push(new Brique(element.posX, element.posY));
@@ -25,14 +26,14 @@ var briques = [
 ]
 
 function Brique(posX, posY) {
-    this.height = canvas.height*zoneY/nbBriqueY;
-    this.width = canvas.width/nbBriqueX;
+    this.height = canvas.height * zoneY / nbBriqueY;
+    this.width = canvas.width / nbBriqueX;
     this.couleur = "red";
-    this.posX = posX*(canvas.width/nbBriqueX);
-    this.posY = posY*(canvas.height/nbBriqueY);
+    this.posX = posX * (canvas.width / nbBriqueX);
+    this.posY = posY * (canvas.height / nbBriqueY);
 }
 
-niveau(lvl1);
+niveau(lvl2);
 draw();
 
 
@@ -93,17 +94,19 @@ function collision(params) {
 
     briques.forEach(brique => {
         //test si la balle est dans une brique
-        if (balle.posX>=brique.posX &&balle.posX<=brique.posX+brique.width &&
-            balle.posY>=brique.posY && balle.posY<=brique.posY.height) {
-                //si la balle touche la gauche de la brique OU si la balle touche la droite de la piece avec erreur de la vitesse
-                //TODO corriger la vitesse
-                if (balle.posX-brique.posX ==0 ||balle.posX-brique.posX-brique.width <=balle.vitesseX) {
-                    balle.vitesseX = -balle.vitesseX;
-                }
-                if (balle.posY -brique.posX ==0 ||balle.posY -brique.posY-brique.height <=balle.vitesseY) {
-                    balle.vitesseY = - balle.vitesseY;
-                }
-            
+        if (balle.posX >= brique.posX && balle.posX <= brique.posX + brique.width &&
+            balle.posY >= brique.posY && balle.posY <= brique.posY + brique.height) {
+            //si la balle touche la gauche de la brique OU si la balle touche la droite de la piece avec erreur de la vitesse
+            //TODO corriger la vitesse
+
+            //TODO chiant prob avec la taille des brique qui sont en x.xxx
+            if (balle.posX - Math.trunc(brique.posX) <= 1 || (Math.trunc(brique.posX) + Math.trunc(brique.width)) - balle.posX <= 1) {
+                balle.vitesseX = -balle.vitesseX;
+            }
+            if (balle.posY - Math.trunc(brique.posY) <= 1 || (Math.trunc(brique.posY) + Math.trunc(brique.height)) - balle.posY <= 1) {
+                balle.vitesseY = - balle.vitesseY;
+            }
+
         }
     });
     //si y'a une value de la balle qui est dans une value de la brique 
