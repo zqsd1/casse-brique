@@ -39,12 +39,16 @@ function clickMouse(params) {
         //recup info du decalage du canvas dans la page
         var rect = canvas.getBoundingClientRect();
         //coordonné du clic
-        var clicX = params.clientX - rect.x
-        var clicY = params.clientY - rect.y;
+        var clicX = params.offsetX;//params.clientX - rect.x
+        var clicY = params.offsetY;//params.clientY - rect.y;
         //le numero de la brique clicqué    
         var positionXBrique = Math.trunc(clicX / largeurBrique);
         var positionYBrique = Math.trunc(clicY / hauteurBrique);
 
+        //le clic est pas dans la zone pour poser les brique
+        if (positionYBrique >= nbBriquesY) {
+            return false;
+        }
         //cherche si y'a une brique dans la case cliké
         var dejaBrique = briques.findIndex((elem, ind, arr) => elem.posX == positionXBrique && elem.posY == positionYBrique);
         //clic gauche
