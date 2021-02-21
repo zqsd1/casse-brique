@@ -90,7 +90,7 @@ function clickMouse(params) {
         // //pas décallé
         // ctx.fillRect(params.offsetX, params.offsetY, 10, 10);
         // ctx.fillStyle = 'rgba(0,0,200,0.5)';
-        // //pas decallé... ou alors de 1px
+        // //décalé de la valeur de la borderdu canvas
         // ctx.fillRect(params.clientX - rect.x, params.clientY - rect.y, 10, 10);
         // ctx.fillStyle = 'green'
         // //decallé => origine de la page + le decalage du canvas
