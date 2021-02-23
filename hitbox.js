@@ -18,6 +18,7 @@ function loop(timeStamp) {
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
     oldTimeStamp = timeStamp;
     balle.mouvement();
+    collision();
     draw();
     window.requestAnimationFrame(loop);
 }
@@ -49,10 +50,47 @@ var balle = {
     r: 10,
     x: 10,
     y: 10,
-    vx: 5,
+    vx: 4,
     vy: 5,
     mouvement: function () {
+
         this.x += this.vx;
         this.y += this.vy;
+
+        if (this.x > canvas.width || this.x < 0)
+            this.vx = -this.vx;
+
+        if (this.y > canvas.height || this.y < 0)
+
+            this.vy = -this.vy;
     }
+}
+
+
+function collision() {
+    brique.collide = false
+    var testX = balle.x;
+    var testY = balle.y;
+
+    if (balle.x < brique.x)
+        //viens de la gauche
+        testX = brique.x;
+    else if (balle.x > brique.x + brique.w)
+        //vien de la droite
+        testX = brique.x + brique.w;
+
+    if (balle.y < brique.y)
+        //viens du haut 
+        testY = brique.y;
+    else if (balle.y > brique.y + brique.h)
+        //viens du bas
+        testY = brique.y + brique.h
+
+    var distX = balle.x - testX;
+    var distY = balle.y - testY;
+
+    var distance = Math.sqrt((distX * distX) + (distY * distY));
+    if (distance <= balle.r)
+        brique.collide = true;
+
 }
