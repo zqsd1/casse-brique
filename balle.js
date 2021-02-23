@@ -1,11 +1,11 @@
 var balle = {
-    posX: 150,
-    posY: 150,
+    posX: 270,
+    posY: 210,
     radius: 10,
     couleur: "purple",
     direction: "down",
-    vitesseX: 1,
-    vitesseY: 1
+    vitesseX: -1,
+    vitesseY: -2
 
 
 }
@@ -22,15 +22,18 @@ function niveau(lvl) {
     });
 }
 var briques = [
-    //new Brique(100, 200)
+    //new Brique(5, 5)
 ]
 
 function Brique(posX, posY) {
     this.height = canvas.height * zoneY / nbBriqueY;
     this.width = canvas.width / nbBriqueX;
+    // this.height = 100;
+    //this.width = 80;
     this.couleur = "red";
     this.posX = posX * (canvas.width / nbBriqueX);
     this.posY = posY * (canvas.height / nbBriqueY);
+    this.collide = false;
 }
 
 niveau(lvl2);
@@ -60,7 +63,7 @@ function drawBriques() {
         ctx.beginPath();
         briques.forEach(element => {
             ctx.save();
-            ctx.fillStyle = element.couleur;
+            ctx.fillStyle = element.collide ? "blue" : element.couleur;
             ctx.fillRect(element.posX, element.posY, element.width, element.height);
             ctx.restore();
         });
@@ -72,10 +75,11 @@ window.requestAnimationFrame(bouger);
 
 //window.setInterval(bouger, 200, balle);
 function bouger() {
-    draw()
     balle.posX += balle.vitesseX;
     balle.posY += balle.vitesseY;
     collision();
+
+    draw()
 
 
     window.requestAnimationFrame(bouger);
@@ -83,6 +87,101 @@ function bouger() {
 }
 
 function collision(params) {
+
+
+
+
+
+    // // RECTANGLE/RECTANGLE
+    // boolean rectRect(float r1x, float r1y, float r1w, float r1h, float r2x, float r2y, float r2w, float r2h) {
+
+    //     // are the sides of one rectangle touching the other?
+
+    //     if (r1x + r1w >= r2x &&    // r1 right edge past r2 left
+    //         r1x <= r2x + r2w &&    // r1 left edge past r2 right
+    //         r1y + r1h >= r2y &&    // r1 top edge past r2 bottom
+    //         r1y <= r2y + r2h) {    // r1 bottom edge past r2 top
+    //           return true;
+    //     }
+    //     return false;
+    //   }
+    briques.forEach(brique => {
+        brique.collide = false;
+    });
+
+
+    var testX = balle.posX;
+    var testY = balle.posY;
+    var swapVitesseX = false;
+    var swapVitesseY = false;
+    briques.forEach(brique => {
+        if (balle.posX < brique.posX) {
+            //viens de la gauche
+            testX = brique.posX;
+        } else if (balle.posX > brique.posX + brique.width) {
+            //vien de la droite
+            testX = brique.posX + brique.width;
+        }
+        if (balle.posY < brique.posY) {
+            //viens du haut 
+            testY = brique.posY;
+        } else if (balle.posY > brique.posY + brique.height) {
+            //viens du bas
+            testY = brique.posY + brique.height
+        }
+        var distX = balle.posX - testX;
+        var distY = balle.posY - testY;
+        var distance = Math.sqrt((distX * distX) + (distY * distY));
+        if (distance <= balle.radius) {
+
+            brique.collide = true;
+            if (distY < 1.4 && distY > -1.4 && !swapVitesseX) {
+                balle.vitesseX = -balle.vitesseX;
+                swapVitesseX = true;
+            }
+            if (distX <= 1.4 && distX >= -1.4 && !swapVitesseY) {
+
+                balle.vitesseY = -balle.vitesseY;
+                swapVitesseY = true;
+            }
+            if (!(distX <= 1.4 && distX >= -1.4) && !(distY < 1.4 && distY > -1.4)) {
+                balle.vitesseY = -balle.vitesseY;
+                swapVitesseY = true;
+                balle.vitesseX = -balle.vitesseX;
+                swapVitesseX = true;
+
+            }
+
+
+
+        }
+    });
+
+    // // CIRCLE/RECTANGLE
+    // boolean circleRect(float cx, float cy, float radius, float rx, float ry, float rw, float rh) {
+
+    //     // temporary variables to set edges for testing
+    //     float testX = cx;
+    //     float testY = cy;
+
+    //     // which edge is closest?
+    //     if (cx < rx)         testX = rx;      // test left edge
+    //     else if (cx > rx+rw) testX = rx+rw;   // right edge
+    //     if (cy < ry)         testY = ry;      // top edge
+    //     else if (cy > ry+rh) testY = ry+rh;   // bottom edge
+
+    //     // get distance from closest edges
+    //     float distX = cx-testX;
+    //     float distY = cy-testY;
+    //     float distance = sqrt( (distX*distX) + (distY*distY) );
+
+    //     // if the distance is less than the radius, collision!
+    //     if (distance <= radius) {
+    //       return true;
+    //     }
+    //     return false;
+    //   }
+
     if (balle.posX + balle.radius >= document.getElementById("canvas").width
         || balle.posX - balle.radius <= 0) {
         balle.vitesseX = -balle.vitesseX
@@ -92,23 +191,23 @@ function collision(params) {
         balle.vitesseY = -balle.vitesseY;
     }
 
-    briques.forEach(brique => {
-        //test si la balle est dans une brique
-        if (balle.posX >= brique.posX && balle.posX <= brique.posX + brique.width &&
-            balle.posY >= brique.posY && balle.posY <= brique.posY + brique.height) {
-            //si la balle touche la gauche de la brique OU si la balle touche la droite de la piece avec erreur de la vitesse
-            //TODO corriger la vitesse
+    // briques.forEach(brique => {
+    //     //test si la balle est dans une brique
+    //     if (balle.posX >= brique.posX && balle.posX <= brique.posX + brique.width &&
+    //         balle.posY >= brique.posY && balle.posY <= brique.posY + brique.height) {
+    //         //si la balle touche la gauche de la brique OU si la balle touche la droite de la piece avec erreur de la vitesse
+    //         //TODO corriger la vitesse
 
-            //TODO chiant prob avec la taille des brique qui sont en x.xxx
-            if (balle.posX - Math.trunc(brique.posX) <= 1 || (Math.trunc(brique.posX) + Math.trunc(brique.width)) - balle.posX <= 1) {
-                balle.vitesseX = -balle.vitesseX;
-            }
-            if (balle.posY - Math.trunc(brique.posY) <= 1 || (Math.trunc(brique.posY) + Math.trunc(brique.height)) - balle.posY <= 1) {
-                balle.vitesseY = - balle.vitesseY;
-            }
+    //         //TODO chiant prob avec la taille des brique qui sont en x.xxx
+    //         if (balle.posX - Math.trunc(brique.posX) <= 1 || (Math.trunc(brique.posX) + Math.trunc(brique.width)) - balle.posX <= 1) {
+    //             balle.vitesseX = -balle.vitesseX;
+    //         }
+    //         if (balle.posY - Math.trunc(brique.posY) <= 1 || (Math.trunc(brique.posY) + Math.trunc(brique.height)) - balle.posY <= 1) {
+    //             balle.vitesseY = - balle.vitesseY;
+    //         }
 
-        }
-    });
+    //     }
+    // });
     //si y'a une value de la balle qui est dans une value de la brique 
     // if (balle.posX >= briques[0].posX && balle.posX <= briques[0].posX + briques[0].width &&
     //     balle.posY >= briques[0].posY && balle.posY <= briques[0].posY + briques[0].height) {
