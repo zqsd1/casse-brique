@@ -15,6 +15,12 @@
 	// 	],
 	// 	"description": "Log output to console"
 	// },
+	"cnvas html": {
+		"scope": "html",
+		"prefix": "cnvs",
+		"body": "    <canvas id=\"${1:canvas}\" width=\"${2:600}\" height=\"${3:800}\" style=\"border: black 1px solid;\">canvas not supported</canvas>",
+		"description": "fait un canvas avec des attribut"
+	},
 	"draw canvas": {
 		"scope": "javascript,typescript",
 		"prefix": "draw",
@@ -26,5 +32,35 @@
 			"}"
 		],
 		"description": "recup pour dessin canvas"
+	},
+	"canvas anim simple": {
+		"scope": "javascript,typescript",
+		"prefix": "canvasAnim",
+		"body": [
+			"var ${2:canvas};",
+			"var ${3:ctx}",
+			"//var secondsPassed = 0",
+			"//var oldTimeStamp = timeStamp",
+			"window.onload = init()",
+			"function init(){",
+			"$2 = document.getElementById(\"${1:canvas}\");",
+			"if ($2.getContext) {",
+			"$3 = $2.getContext(\"2d\");",
+			"$0",
+			"}",
+			"window.requestAnimationFrame(loop)",
+			"}",
+			"function loop(timeStamp) {",
+			"//secondsPassed = (timeStamp - oldTimeStamp) / 1000;",
+			"//oldTimeStamp = timeStamp;",
+			 "draw()",
+			"window.requestAnimationFrame(loop);",
+			"}",
+			"function draw(){",
+			"}",
+			
+		],
+		"description": "fait le simple pour animer un canvas"
 	}
+
 }

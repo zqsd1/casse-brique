@@ -8,6 +8,14 @@
             "type": "firefox",
             "request": "launch",
             "reAttach": true,
+            "name": "Launch hitbox.html",
+            "file": "${workspaceFolder}/hitbox.html"
+        },
+        
+        {
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
             "name": "Launch balle.html",
             "file": "${workspaceFolder}/balle.html"
         },
