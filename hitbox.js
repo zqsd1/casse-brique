@@ -48,27 +48,31 @@ var brique = {
 
 var balle = {
     r: 10,
-    x: 10,
-    y: 10,
-    vx: 4,
-    vy: 5,
+    x: 60,
+    y: 100,
+    vx: 200,
+    vy: 100,
     mouvement: function () {
 
-        this.x += this.vx;
-        this.y += this.vy;
+        this.x += this.vx * secondsPassed;
+        this.y += this.vy * secondsPassed;
 
-        if (this.x > canvas.width || this.x < 0)
+        if (this.x > canvas.width || this.x < 0) {
+
             this.vx = -this.vx;
+        }
 
-        if (this.y > canvas.height || this.y < 0)
+        if (this.y > canvas.height || this.y < 0) {
+
 
             this.vy = -this.vy;
+        }
     }
 }
 
 
 function collision() {
-    brique.collide = false
+    //brique.collide = false
     var testX = balle.x;
     var testY = balle.y;
 
@@ -86,11 +90,42 @@ function collision() {
         //viens du bas
         testY = brique.y + brique.h
 
-    var distX = balle.x - testX;
-    var distY = balle.y - testY;
+    //0 veut dire que c'est dedans
+    var distX = balle.x - testX;// +  rrive de la droite - arrive de la gauche
+    var distY = balle.y - testY;//+ arrive du bas - arrive du haut
 
     var distance = Math.sqrt((distX * distX) + (distY * distY));
-    if (distance <= balle.r)
+    if (distance <= balle.r) {
+        if (!brique.collide) {
+
+            if (distY == 0 || distX == 0) {
+                if (distY == 0) {
+                    balle.vx = -balle.vx;
+                }
+                if (distX == 0) {
+                    balle.vy = -balle.vy
+                }
+            }
+            else {
+                if ((distX * distX) > (distY * distY)) {
+                    balle.vx = -balle.vx
+                }
+                else if ((distX * distX) < (distY * distY)) {
+                    balle.vy = -balle.vy
+                }
+                else {
+                    balle.vx = -balle.vx
+                    balle.vy = -balle.vy
+                }
+
+            }
+        }
+
         brique.collide = true;
+
+    }
+    else {
+        brique.collide = false;
+    }
 
 }
