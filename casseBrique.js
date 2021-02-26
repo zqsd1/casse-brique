@@ -2,7 +2,42 @@ var canvas;
 var ctx
 var secondsPassed = 0;
 var oldTimeStamp = 0;
-window.onload = init()
+var nbBriqueX = 15;
+var nbBriqueY = 30
+var briques = [
+
+];
+var balle = {
+    r: 10,
+    x: 120,
+    y: 10,
+    vx: 100,
+    vy: 200,
+    mouvement: function () {
+
+        this.x += this.vx * secondsPassed;
+        this.y += this.vy * secondsPassed;
+
+        if (this.x > canvas.width || this.x < 0) {
+
+            this.vx = -this.vx;
+        }
+
+        if (this.y > canvas.height || this.y < 0) {
+
+
+            this.vy = -this.vy;
+        }
+    }
+}
+
+
+var lvl1 = [{ "x": 8, "y": 1 }, { "x": 6, "y": 1 }, { "x": 6, "y": 3 }, { "x": 8, "y": 3 }, { "x": 10, "y": 3 }, { "x": 10, "y": 1 }, { "x": 8, "y": 6 }, { "x": 4, "y": 8 }, { "x": 1, "y": 6 }, { "x": 1, "y": 12 }, { "x": 10, "y": 10 }, { "x": 12, "y": 10 }, { "x": 13, "y": 6 }, { "x": 13, "y": 2 }]
+var lvl2 =
+[{ "x": 1, "y": 3 }, { "x": 2, "y": 3 }, { "x": 3, "y": 3 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }, { "x": 6, "y": 3 }, { "x": 7, "y": 3 }, { "x": 8, "y": 3 }, { "x": 9, "y": 3 }, { "x": 10, "y": 3 }, { "x": 11, "y": 3 }, { "x": 11, "y": 4 }, { "x": 11, "y": 5 }, { "x": 11, "y": 6 }, { "x": 11, "y": 7 }, { "x": 11, "y": 8 }, { "x": 10, "y": 8 }, { "x": 9, "y": 8 }, { "x": 6, "y": 8 }, { "x": 4, "y": 8 }, { "x": 5, "y": 8 }, { "x": 2, "y": 8 }, { "x": 1, "y": 8 }]
+
+
+document.onload = init()
 
 function init() {
 
@@ -26,16 +61,6 @@ function loop(timeStamp) {
 function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-
-    //ctx.beginPath();
-    // for (let i = 0; i < briques.length; i++) {
-    //     const brique = briques[i];
-    //     ctx.save();
-    //     ctx.rect(brique.x, brique.y, brique.w, brique.h);
-    //     ctx.fillStyle = brique.collide ? "orange" : "blue";
-    //     ctx.fill();
-    //     ctx.restore();        
-    // }
     briques.forEach(brique => {
         ctx.beginPath();
         ctx.save();
@@ -47,60 +72,20 @@ function draw() {
 
 
     ctx.beginPath();
-    //ctx.restore();
     ctx.arc(balle.x, balle.y, balle.r, 0, Math.PI * 2);
     ctx.fill();
 
 }
-
-// var brique = {
-//     x: 200,
-//     y: 100,
-//     w: 100,
-//     h: 150,
-//     collide: false
-// }
-
-var briques = [
-    brique1 = {
-        x: 100,
-        y: 100,
-        w: 100,
-        h: 100,
-        collide: false
-
-    },
-    brique2 = {
-        x: 200,
-        y: 100,
-        w: 100,
-        h: 100,
-        collide: false
-    }
-];
-var balle = {
-    r: 10,
-    x: 120,
-    y: 10,
-    vx: 100,
-    vy: 100,
-    mouvement: function () {
-
-        this.x += this.vx * secondsPassed;
-        this.y += this.vy * secondsPassed;
-
-        if (this.x > canvas.width || this.x < 0) {
-
-            this.vx = -this.vx;
-        }
-
-        if (this.y > canvas.height || this.y < 0) {
-
-
-            this.vy = -this.vy;
-        }
-    }
-}
+lvl2.forEach(element => {
+    briques.push(
+        {
+            x: element.x*canvas.width/nbBriqueX ,
+            y: element.y*canvas.height/nbBriqueY,
+            w: canvas.width/nbBriqueX,
+            h: canvas.height/nbBriqueY,
+            collide: false
+        })
+});
 
 
 function collision() {
@@ -135,13 +120,13 @@ function collision() {
 
         var distance = Math.sqrt((distX * distX) + (distY * distY));
         if (distance <= balle.r) {
-           
+
             if (!brique.collide) {
 
                 if (distY == 0 || distX == 0) {
                     if (distY == 0 && !ballereverseX) {
                         balle.vx = -balle.vx;
-                        ballereverseX =true;
+                        ballereverseX = true;
                     }
                     if (distX == 0 && !ballereverseY) {
                         balle.vy = -balle.vy;
@@ -149,11 +134,11 @@ function collision() {
                     }
                 }
                 else {
-                    if ((distX * distX) > (distY * distY) &&!ballereverseX) {
+                    if ((distX * distX) > (distY * distY) && !ballereverseX) {
                         balle.vx = -balle.vx;
                         ballereverseX = true;
                     }
-                    else if ((distX * distX) < (distY * distY) &&!ballereverseY) {
+                    else if ((distX * distX) < (distY * distY) && !ballereverseY) {
                         balle.vy = -balle.vy;
                         ballereverseY = true;
                     }
@@ -175,3 +160,5 @@ function collision() {
         }
     }
 }
+
+

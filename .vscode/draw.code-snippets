@@ -41,6 +41,7 @@
 			"var ${3:ctx}",
 			"//var secondsPassed = 0",
 			"//var oldTimeStamp = timeStamp",
+			
 			"window.onload = init()",
 			"function init(){",
 			"$2 = document.getElementById(\"${1:canvas}\");",
