@@ -5,12 +5,30 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>editeur de niveau</title>
+    <link rel="stylesheet" href="style.css">
     <script src="editeurNiveau.js" async></script>
+    
 </head>
 
 <body>
-    <canvas id="canvas" width="600" height="800" style="border: black 1px solid; position: absolute; left: 50px;top: 100px;">canvas pas supporté</canvas>
-    <div id="briquesOutput" style="position: absolute; top: 30;left: 700;"></div>
+    <canvas id="canvas" class="canvas" width="600" height="800">canvas pas supporté</canvas>
+    <div id="niveauBrique" class="div--lvl">
+        <div>
+            <label for="niveau1">lvl1</label>
+            <input type="radio" name="niveau" id="niveau1" value="lvl1" checked>
+        </div>
+        <div>
+            <label for="niveau2">lvl2</label>
+            <input type="radio" name="niveau" id="niveau2" value="lvl2">
+            
+        </div>
+        <div>
+            <label for="niveau3">lvl3</label>
+            <input type="radio" name="niveau" id="niveau3" value="lvl3">
+        </div>
+    </div>
+    <div id="briquesOutput" ></div>
+
 </body>
 
 </html>

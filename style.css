@@ -1,0 +1,26 @@
+
+body{
+display: flex;   
+justify-content:flex-start ;
+}
+
+
+.canvas{
+    border: 2px black solid;
+    margin: 1em;
+    /* background :rgba(206, 42, 42, 0.5); */
+}
+.div--lvl{
+    position: relative;
+    width: auto;
+    padding: 2em;
+    display: flex;
+    flex-flow: column;
+}
+.div--lvl>div{
+    padding: .5em;
+    min-width: max-content;
+
+}
+
+
