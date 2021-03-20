@@ -7,6 +7,27 @@ var nbBriqueY = 30
 var briques = [
 
 ];
+
+var barre = {
+    w: 200,
+    h: 10,
+    color: "red",
+    x: 600 / 2 - 200 / 2,
+    y: 800 - 3 * 10,
+    vx: 500,
+    mouvement: function (droite = true) {
+
+        if (droite ? this.x + this.w < canvas.width : this.x > 0) {
+
+
+            droite ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
+        }
+
+
+
+    }
+}
+
 var balle = {
     r: 10,
     x: 120,
@@ -74,6 +95,10 @@ function draw() {
     ctx.beginPath();
     ctx.arc(balle.x, balle.y, balle.r, 0, Math.PI * 2);
     ctx.fill();
+
+    ctx.beginPath();
+    ctx.fillStyle = barre.color;
+    ctx.fillRect(barre.x, barre.y, barre.w, barre.h);
 
 }
 lvl3.forEach(element => {
@@ -153,7 +178,7 @@ function collision() {
             }
 
             brique.collide = true;
-            briques.splice(i,1)
+            briques.splice(i, 1)
 
         }
         else {
@@ -162,4 +187,22 @@ function collision() {
     }
 }
 
+
+canvas.addEventListener('mousemove', function (e) {
+    if (e.clientX - barre.w / 2 <= 0 || e.clientX + barre.w / 2 >= canvas.width) {
+    }
+    else
+
+        barre.x = e.clientX - barre.w / 2;
+}
+
+);
+document.addEventListener("keydown", e => {
+    if (e.key == "ArrowRight") {
+        barre.mouvement(true);
+    }
+    if (e.key == "ArrowLeft") {
+        barre.mouvement(false);
+    }
+})
 
