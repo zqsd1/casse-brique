@@ -8,10 +8,25 @@ var hauteurBrique = y / nbBriquesY;
 
 var briques = [];
 
-function Brique(posX, posY) {
+const config = {
+    "difficulte" : {
+        "lvl1" :{"color" : "red"},
+        "lvl2" : {"color" : "green"},
+        "lvl3" : {"color" : "yellow"}
+    }
+}
+
+var menu = {
+    briquelvl1: "black",
+    briquelvl2: "yellow",
+    briquelvl3: "green",
+}
+
+function Brique(posX, posY, niveau) {
 
     this.posX = posX;
     this.posY = posY;
+    this.niveau = niveau
 }
 
 
@@ -27,6 +42,21 @@ if (canvas.getContext) {
         }
     }
     ctx.stroke();
+    ctx.save();
+    
+    //ctx.moveTo(0,canvas.height-hauteurBrique);
+    ctx.fillStyle = "black";
+    ctx.fillRect(0,canvas.height-hauteurBrique,largeurBrique,hauteurBrique);
+    ctx.fillStyle = "yellow";
+    ctx.fillRect(largeurBrique,canvas.height-hauteurBrique,largeurBrique,hauteurBrique);
+    ctx.fillStyle = "green";
+    ctx.fillRect(largeurBrique*2,canvas.height-hauteurBrique,largeurBrique,hauteurBrique);
+    //ctx.moveTo(100,600);
+    ctx.font = "30px Arial";
+    ctx.fillText("niveau selectionné : ",5,5)
+   
+   
+    ctx.restore()
 }
 
 canvas.addEventListener("mousedown", clickMouse)
@@ -55,8 +85,9 @@ function clickMouse(params) {
         if (params.button == 0) {
             //add la brique
             if (dejaBrique == -1) {
+                ctx.fillStyle = config.difficulte[lvlSelected].color
                 ctx.fillRect(positionXBrique * largeurBrique, positionYBrique * hauteurBrique, largeurBrique, hauteurBrique);
-                briques.push(new Brique(positionXBrique, positionYBrique));
+                briques.push(new Brique(positionXBrique, positionYBrique,lvlSelected));
             }
         }
 
@@ -98,3 +129,13 @@ function clickMouse(params) {
 
     }
 }
+
+var lvlSelected = document.querySelector("[name = niveau]:checked").value
+
+var lvls = document.querySelectorAll("[name = niveau]")
+lvls.forEach(lvl => {
+    lvl.addEventListener('change',e=>{
+        lvlSelected = e.target.value;
+    
+    })
+});
