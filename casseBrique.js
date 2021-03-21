@@ -1,5 +1,5 @@
 var canvas;
-var ctx
+var ctx;
 var secondsPassed = 0;
 var oldTimeStamp = 0;
 var nbBriqueX = 15;
@@ -19,6 +19,7 @@ var barre = {
     y: 800 - 3 * 10,
     vx: 500,
     mouvement: function (droite = true) {
+        //test si ça deborde pas du canvas
         if (droite ? this.x + this.w < canvas.width : this.x > 0) {
             droite ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
         }
@@ -27,10 +28,10 @@ var barre = {
 
 var balle = {
     r: 10,
-    x: 120,
-    y: 10,
-    vx: 100,
-    vy: 200,
+    x: 250,
+    y: 760,
+    vx: 0,
+    vy: 0,
     mouvement: function () {
 
         this.x += this.vx * secondsPassed;
@@ -77,14 +78,7 @@ function loop(timeStamp) {
     oldTimeStamp = timeStamp;
     balle.mouvement();
 
-
-
-    //collide(briques);
     collide(balle.y > 2 * canvas.height / 3 ? [barre] : briques);
-
-    //balle.y > 2 * canvas.height / 3 ? collisionBarre() : collide(briques);
-    //collisionBarre();
-    
     draw();
     window.requestAnimationFrame(loop);
 }
@@ -102,7 +96,7 @@ function draw() {
         ctx.beginPath();
         ctx.save();
         ctx.rect(brique.x, brique.y, brique.w, brique.h);
-        ctx.fillStyle = brique.collide ? "orange" : "blue";
+        ctx.fillStyle = "blue";
         ctx.fill();
         ctx.restore();
     });
@@ -128,7 +122,7 @@ lvl3.forEach(element => {
             y: element.y * canvas.height / nbBriqueY,
             w: canvas.width / nbBriqueX,
             h: canvas.height / nbBriqueY,
-            collide: false
+
         })
 });
 
@@ -308,6 +302,11 @@ document.addEventListener("keydown", e => {
     }
     if (e.key == "ArrowLeft") {
         barre.mouvement(false);
+    }
+    //space bar
+    if (e.key == " ") {
+        balle.vx == 0 ? balle.vx = 100 : balle.vx = balle.vx;
+        balle.vy == 0 ? balle.vy = 200 : balle.vy = balle.vy;
     }
 })
 
