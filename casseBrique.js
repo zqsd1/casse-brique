@@ -53,10 +53,20 @@ var balle = {
 /**
  * des briques a charger ;
  */
-var lvl1 = [{ "x": 8, "y": 1 }, { "x": 6, "y": 1 }, { "x": 6, "y": 3 }, { "x": 8, "y": 3 }, { "x": 10, "y": 3 }, { "x": 10, "y": 1 }, { "x": 8, "y": 6 }, { "x": 4, "y": 8 }, { "x": 1, "y": 6 }, { "x": 1, "y": 12 }, { "x": 10, "y": 10 }, { "x": 12, "y": 10 }, { "x": 13, "y": 6 }, { "x": 13, "y": 2 }]
-var lvl2 =
+const lvl4 = [{ "posX": 0, "posY": 5, "niveau": "lvl1" }, { "posX": 1, "posY": 5, "niveau": "lvl1" }, { "posX": 2, "posY": 5, "niveau": "lvl1" }, { "posX": 3, "posY": 5, "niveau": "lvl1" }, { "posX": 5, "posY": 5, "niveau": "lvl1" }, { "posX": 4, "posY": 5, "niveau": "lvl1" }, { "posX": 6, "posY": 5, "niveau": "lvl1" }, { "posX": 7, "posY": 5, "niveau": "lvl1" }, { "posX": 8, "posY": 5, "niveau": "lvl1" }, { "posX": 9, "posY": 5, "niveau": "lvl1" }, { "posX": 10, "posY": 5, "niveau": "lvl1" }, { "posX": 11, "posY": 5, "niveau": "lvl1" }, { "posX": 12, "posY": 5, "niveau": "lvl1" }, { "posX": 13, "posY": 5, "niveau": "lvl1" }, { "posX": 14, "posY": 5, "niveau": "lvl1" }, { "posX": 13, "posY": 6, "niveau": "lvl3" }, { "posX": 14, "posY": 6, "niveau": "lvl3" }, { "posX": 12, "posY": 6, "niveau": "lvl3" }, { "posX": 11, "posY": 6, "niveau": "lvl3" }, { "posX": 10, "posY": 6, "niveau": "lvl3" }, { "posX": 9, "posY": 6, "niveau": "lvl3" }, { "posX": 8, "posY": 6, "niveau": "lvl3" }, { "posX": 7, "posY": 6, "niveau": "lvl3" }, { "posX": 6, "posY": 6, "niveau": "lvl3" }, { "posX": 5, "posY": 6, "niveau": "lvl3" }, { "posX": 4, "posY": 6, "niveau": "lvl3" }, { "posX": 3, "posY": 6, "niveau": "lvl3" }, { "posX": 2, "posY": 6, "niveau": "lvl3" }, { "posX": 1, "posY": 6, "niveau": "lvl3" }, { "posX": 0, "posY": 6, "niveau": "lvl3" }, { "posX": 7, "posY": 7, "niveau": "lvl1" }, { "posX": 7, "posY": 8, "niveau": "lvl1" }, { "posX": 7, "posY": 9, "niveau": "lvl1" }, { "posX": 7, "posY": 10, "niveau": "lvl1" }, { "posX": 7, "posY": 11, "niveau": "lvl1" }, { "posX": 13, "posY": 4, "niveau": "lvl2" }, { "posX": 1, "posY": 4, "niveau": "lvl2" }, { "posX": 3, "posY": 3, "niveau": "lvl2" }, { "posX": 5, "posY": 4, "niveau": "lvl2" }, { "posX": 7, "posY": 3, "niveau": "lvl2" }, { "posX": 9, "posY": 4, "niveau": "lvl2" }, { "posX": 11, "posY": 3, "niveau": "lvl2" }, { "posX": 8, "posY": 7, "niveau": "lvl2" }, { "posX": 6, "posY": 7, "niveau": "lvl2" }, { "posX": 5, "posY": 8, "niveau": "lvl2" }, { "posX": 4, "posY": 7, "niveau": "lvl2" }, { "posX": 9, "posY": 8, "niveau": "lvl2" }, { "posX": 10, "posY": 7, "niveau": "lvl2" }, { "posX": 11, "posY": 8, "niveau": "lvl2" }, { "posX": 12, "posY": 7, "niveau": "lvl2" }, { "posX": 3, "posY": 8, "niveau": "lvl2" }, { "posX": 2, "posY": 7, "niveau": "lvl2" }, { "posX": 14, "posY": 11, "niveau": "lvl1" }, { "posX": 11, "posY": 11, "niveau": "lvl1" }, { "posX": 4, "posY": 11, "niveau": "lvl1" }, { "posX": 0, "posY": 11, "niveau": "lvl1" }]
+const lvl1 = [{ "x": 8, "y": 1 }, { "x": 6, "y": 1 }, { "x": 6, "y": 3 }, { "x": 8, "y": 3 }, { "x": 10, "y": 3 }, { "x": 10, "y": 1 }, { "x": 8, "y": 6 }, { "x": 4, "y": 8 }, { "x": 1, "y": 6 }, { "x": 1, "y": 12 }, { "x": 10, "y": 10 }, { "x": 12, "y": 10 }, { "x": 13, "y": 6 }, { "x": 13, "y": 2 }]
+const lvl2 =
     [{ "x": 1, "y": 3 }, { "x": 2, "y": 3 }, { "x": 3, "y": 3 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }, { "x": 6, "y": 3 }, { "x": 7, "y": 3 }, { "x": 8, "y": 3 }, { "x": 9, "y": 3 }, { "x": 10, "y": 3 }, { "x": 11, "y": 3 }, { "x": 11, "y": 4 }, { "x": 11, "y": 5 }, { "x": 11, "y": 6 }, { "x": 11, "y": 7 }, { "x": 11, "y": 8 }, { "x": 10, "y": 8 }, { "x": 9, "y": 8 }, { "x": 6, "y": 8 }, { "x": 4, "y": 8 }, { "x": 5, "y": 8 }, { "x": 2, "y": 8 }, { "x": 1, "y": 8 }]
-var lvl3 = [{ "x": 3, "y": 3 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }, { "x": 6, "y": 3 }, { "x": 7, "y": 3 }, { "x": 8, "y": 3 }, { "x": 9, "y": 3 }, { "x": 10, "y": 3 }, { "x": 10, "y": 4 }, { "x": 10, "y": 5 }, { "x": 10, "y": 6 }, { "x": 10, "y": 7 }, { "x": 9, "y": 7 }, { "x": 8, "y": 7 }, { "x": 7, "y": 7 }, { "x": 6, "y": 7 }, { "x": 5, "y": 7 }, { "x": 4, "y": 7 }, { "x": 3, "y": 7 }, { "x": 3, "y": 5 }, { "x": 3, "y": 6 }, { "x": 3, "y": 4 }, { "x": 3, "y": 8 }, { "x": 4, "y": 8 }, { "x": 5, "y": 8 }, { "x": 10, "y": 8 }, { "x": 10, "y": 9 }, { "x": 10, "y": 10 }, { "x": 9, "y": 10 }, { "x": 8, "y": 10 }, { "x": 7, "y": 10 }, { "x": 6, "y": 10 }, { "x": 5, "y": 10 }, { "x": 4, "y": 10 }, { "x": 3, "y": 10 }, { "x": 3, "y": 9 }, { "x": 5, "y": 9 }, { "x": 4, "y": 9 }]
+const lvl3 = [{ "x": 3, "y": 3 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }, { "x": 6, "y": 3 }, { "x": 7, "y": 3 }, { "x": 8, "y": 3 }, { "x": 9, "y": 3 }, { "x": 10, "y": 3 }, { "x": 10, "y": 4 }, { "x": 10, "y": 5 }, { "x": 10, "y": 6 }, { "x": 10, "y": 7 }, { "x": 9, "y": 7 }, { "x": 8, "y": 7 }, { "x": 7, "y": 7 }, { "x": 6, "y": 7 }, { "x": 5, "y": 7 }, { "x": 4, "y": 7 }, { "x": 3, "y": 7 }, { "x": 3, "y": 5 }, { "x": 3, "y": 6 }, { "x": 3, "y": 4 }, { "x": 3, "y": 8 }, { "x": 4, "y": 8 }, { "x": 5, "y": 8 }, { "x": 10, "y": 8 }, { "x": 10, "y": 9 }, { "x": 10, "y": 10 }, { "x": 9, "y": 10 }, { "x": 8, "y": 10 }, { "x": 7, "y": 10 }, { "x": 6, "y": 10 }, { "x": 5, "y": 10 }, { "x": 4, "y": 10 }, { "x": 3, "y": 10 }, { "x": 3, "y": 9 }, { "x": 5, "y": 9 }, { "x": 4, "y": 9 }]
+
+
+const config = {
+    "difficulte": {
+        "lvl1": "red",
+        "lvl2": "green",
+        "lvl3": "yellow"
+    }
+}
 
 document.onload = init()
 
@@ -96,7 +106,7 @@ function draw() {
         ctx.beginPath();
         ctx.save();
         ctx.rect(brique.x, brique.y, brique.w, brique.h);
-        ctx.fillStyle = "blue";
+        ctx.fillStyle = config.difficulte[brique.niveau];
         ctx.fill();
         ctx.restore();
     });
@@ -115,16 +125,28 @@ function draw() {
 }
 
 //charge les brique du niveau dans le tableau de brique a dessiner
-lvl3.forEach(element => {
+// lvl3.forEach(element => {
+//     briques.push(
+//         {
+//             x: element.x * canvas.width / nbBriqueX,
+//             y: element.y * canvas.height / nbBriqueY,
+//             w: canvas.width / nbBriqueX,
+//             h: canvas.height / nbBriqueY,
+
+//         })
+// });
+
+lvl4.forEach(element => {
     briques.push(
         {
-            x: element.x * canvas.width / nbBriqueX,
-            y: element.y * canvas.height / nbBriqueY,
+            x: element.posX * canvas.width / nbBriqueX,
+            y: element.posY * canvas.height / nbBriqueY,
             w: canvas.width / nbBriqueX,
             h: canvas.height / nbBriqueY,
-
-        })
-});
+            niveau: element.niveau
+        }
+    )
+})
 
 /**
  * dit si il y a une collision entre 2 element du canvas
@@ -214,8 +236,24 @@ function collide(briques) {
                     ballereverseY = true;
                 }
             }
-            briques.splice(index, 1);
-            index--;
+
+            switch (brique.niveau) {
+                case "lvl1":
+                    briques.splice(index, 1);
+                    index--;
+                    break;
+                case "lvl2":
+                    brique.niveau = "lvl1";
+                    break;
+                case "lvl3":
+                    brique.niveau = "lvl2";
+                    break;
+
+                default:
+                    break;
+            }
+
+
         }
     }
 }
