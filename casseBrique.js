@@ -5,9 +5,20 @@ var oldTimeStamp = 0;
 var nbBriqueX = 15;
 var nbBriqueY = 30
 var briques = [
-
+    
 ];
 
+document.onload = init()
+
+function init() {
+
+    canvas = document.getElementById("canvas");
+    if (canvas.getContext) {
+        ctx = canvas.getContext("2d");
+
+    }
+    window.requestAnimationFrame(loop)
+}
 var barre = {
     w: 200,
     h: 10,
@@ -15,8 +26,8 @@ var barre = {
     /**
      * w et h sont lié au canvas
      */
-    x: 600 / 2 - 200 / 2,
-    y: 800 - 3 * 10,
+    x: (canvas.width / 2 - 200 / 2),
+    y: (canvas.height - 3 * 10),
     vx: 500,
     mouvement: function (droite = true) {
         //test si ça deborde pas du canvas
@@ -68,17 +79,6 @@ const config = {
     }
 }
 
-document.onload = init()
-
-function init() {
-
-    canvas = document.getElementById("canvas");
-    if (canvas.getContext) {
-        ctx = canvas.getContext("2d");
-
-    }
-    window.requestAnimationFrame(loop)
-}
 /**
  * fait dessiner le canvas avec une notion temporelle
  * @param {timeStamp} timeStamp 
