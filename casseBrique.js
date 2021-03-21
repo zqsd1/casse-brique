@@ -1,9 +1,39 @@
 var canvas;
 var ctx;
-var secondsPassed = 0;
+//var secondsPassed = 0;
+var secondsPassedFix = 0
 var oldTimeStamp = 0;
 var nbBriqueX = 15;
-var nbBriqueY = 30
+var nbBriqueY = 30;
+//TODO 1config par lvl?
+
+const config2 = {
+    "pv": {
+        1: "red",
+        2: "yellow",
+        3: "green",
+    },
+    "dimension": {
+        "briqueX": 15,
+        "briqueY": 15,
+        "ratioX": 1,
+        "ratioY": .5
+    }
+}
+const config = {
+    "difficulte": {
+        "lvl1": "red",
+        "lvl2": "green",
+        "lvl3": "yellow"
+    },
+    "dimension": {
+        "briquesX": 15,
+        "briquesY": 30,// nombre de ligne de brique sur le canvas //TODO là c'est toute la hauteur du canvas, faut une partie zone brique
+        "hauteurJeux": .5
+    },
+
+
+}
 var briques = [
 
 ];
@@ -18,13 +48,19 @@ var barre = {
     x: 600 / 2 - 200 / 2,
     y: 800 - 3 * 10,
     vx: 500,
-    mouvement: function (droite = true) {
+    mouvement: function (droite = true/*,secondsPassed*/) {
+
         //test si ça deborde pas du canvas
         if (droite ? this.x + this.w < canvas.width : this.x > 0) {
-            droite ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
+            droite ? this.x += this.vx * secondsPassedFix : this.x -= this.vx * secondsPassedFix;
+
         }
     }
 }
+const eventBallePerdue = new CustomEvent("ballePerdue", {
+    bubbles: true
+});
+
 
 var balle = {
     r: 10,
@@ -32,23 +68,48 @@ var balle = {
     y: 760,
     vx: 0,
     vy: 0,
-    mouvement: function () {
+
+    //si la balle touche plusieur brique en meme temps sa risque d'inverser plusieur fois sa direction et finalement sa va rien changer
+    // donc changement possible que 1 fois
+    isVxModif: false,
+    isVyModif: false,
+    inverseX: function () {
+        if (!this.isVxModif) {
+            this.vx = -this.vx;
+            this.isVxModif = true;
+        }
+    },
+    inverseY: function () {
+        if (!this.isVyModif) {
+            this.vy = -this.vy;
+            this.isVyModif = true;
+        }
+    },
+
+    mouvement: function (secondsPassed) {
+        this.isVxModif = false;
+        this.isVyModif = false;
 
         this.x += this.vx * secondsPassed;
         this.y += this.vy * secondsPassed;
 
         if (this.x > canvas.width || this.x < 0) {
-
-            this.vx = -this.vx;
+            //this.vx = -this.vx;
+            this.inverseX();
         }
 
         if (this.y > canvas.height || this.y < 0) {
+            //TODO si la balle touche en bas vitesse =0 et position = sur la barre
 
+            canvas.dispatchEvent(eventBallePerdue);
 
-            this.vy = -this.vy;
+            this.inverseY();
+            //this.vy = -this.vy;
         }
     }
 }
+//TODO tableau vide = game over
+//TODO nb vie => balle touche bas = -1 vie /vie = 0 game over
 
 /**
  * des briques a charger ;
@@ -60,15 +121,8 @@ const lvl2 =
 const lvl3 = [{ "x": 3, "y": 3 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }, { "x": 6, "y": 3 }, { "x": 7, "y": 3 }, { "x": 8, "y": 3 }, { "x": 9, "y": 3 }, { "x": 10, "y": 3 }, { "x": 10, "y": 4 }, { "x": 10, "y": 5 }, { "x": 10, "y": 6 }, { "x": 10, "y": 7 }, { "x": 9, "y": 7 }, { "x": 8, "y": 7 }, { "x": 7, "y": 7 }, { "x": 6, "y": 7 }, { "x": 5, "y": 7 }, { "x": 4, "y": 7 }, { "x": 3, "y": 7 }, { "x": 3, "y": 5 }, { "x": 3, "y": 6 }, { "x": 3, "y": 4 }, { "x": 3, "y": 8 }, { "x": 4, "y": 8 }, { "x": 5, "y": 8 }, { "x": 10, "y": 8 }, { "x": 10, "y": 9 }, { "x": 10, "y": 10 }, { "x": 9, "y": 10 }, { "x": 8, "y": 10 }, { "x": 7, "y": 10 }, { "x": 6, "y": 10 }, { "x": 5, "y": 10 }, { "x": 4, "y": 10 }, { "x": 3, "y": 10 }, { "x": 3, "y": 9 }, { "x": 5, "y": 9 }, { "x": 4, "y": 9 }]
 
 
-const config = {
-    "difficulte": {
-        "lvl1": "red",
-        "lvl2": "green",
-        "lvl3": "yellow"
-    }
-}
 
-document.onload = init()
+init();
 
 function init() {
 
@@ -84,11 +138,20 @@ function init() {
  * @param {timeStamp} timeStamp 
  */
 function loop(timeStamp) {
-    secondsPassed = (timeStamp - oldTimeStamp) / 1000;
-    oldTimeStamp = timeStamp;
-    balle.mouvement();
+    //pour faire les deplacement par rapport au temps
+    if (oldTimeStamp === undefined)
+        oldTimeStamp = timeStamp
 
-    collide(balle.y > 2 * canvas.height / 3 ? [barre] : briques);
+    const secondsPassed = (timeStamp - oldTimeStamp) / 1000;
+    oldTimeStamp = timeStamp;
+    //FIXME gauche droite clavier pour la barre
+    secondsPassedFix = secondsPassed;
+
+    balle.mouvement(secondsPassed);
+
+    collide(balle.y > canvas.height * config.dimension.hauteurJeux ? [barre] : briques);
+
+    // collide(balle.y > 2 * canvas.height / 3 ? [barre] : briques);
     draw();
     window.requestAnimationFrame(loop);
 }
@@ -141,12 +204,89 @@ lvl4.forEach(element => {
         {
             x: element.posX * canvas.width / nbBriqueX,
             y: element.posY * canvas.height / nbBriqueY,
-            w: canvas.width / nbBriqueX,
-            h: canvas.height / nbBriqueY,
+            w: canvas.width / config.dimension.briquesX,
+            h: canvas.height / config.dimension.briquesY,
             niveau: element.niveau
         }
     )
 })
+
+/**
+ * gere les collision de la balle avec les briques et la barre de rebond
+ * @param {briqes} briques la liste des brique a test 
+ */
+function collide(briques) {
+
+
+
+    //teste pour toute les briques
+    //for parce que je retire les brique qui ont une collision et avec foreach sa en saute apres en avoir retiré
+    for (let index = 0; index < briques.length; index++) {
+        const brique = briques[index];
+        const [distX, distY] = detectCollisionBetweenRectAndBall(brique, balle);
+
+        //si j'ai une collision
+        //inverse direction de la balle
+        if (distX != undefined) {
+
+            if (distY == 0 || distX == 0) {
+                if (distY == 0 && !balle.isVxModif) {
+                    balle.inverseX();
+                    //     balle.vx = -balle.vx;
+                    //     ballereverseX = true;
+                }
+                if (distX == 0 && !balle.isVyModif) {
+                    balle.inverseY();
+                    // balle.vy = -balle.vy;
+                    //ballereverseY = true;
+                }
+            }
+            //sa arrive quand la balle est vers un angle d'une brique
+            else {
+                //la balle à plutot touché droite/ gauche
+                if ((distX * distX) > (distY * distY) && !balle.isVxModif) {
+                    balle.inverseX();
+                    // balle.vx = -balle.vx;
+                    //ballereverseX = true;
+                }
+                //la balle à plutot touché le top/bot
+                else if ((distX * distX) < (distY * distY) && !balle.isVyModif) {
+                    balle.inverseY();
+                    //balle.vy = -balle.vy;
+                    //ballereverseY = true;
+                }
+                else {
+                    //la balle a touché un angle niquel
+
+                    balle.inverseX();
+                    balle.inverseY();
+                    //balle.vx = -balle.vx;
+                    //balle.vy = -balle.vy;
+                    //ballereverseX = true;
+                    //ballereverseY = true;
+                }
+            }
+
+            switch (brique.niveau) {
+                case "lvl1":
+                    briques.splice(index, 1);
+                    index--;
+                    break;
+                case "lvl2":
+                    brique.niveau = "lvl1";
+                    break;
+                case "lvl3":
+                    brique.niveau = "lvl2";
+                    break;
+
+                default:
+                    break;
+            }
+
+
+        }
+    }
+}
 
 /**
  * dit si il y a une collision entre 2 element du canvas
@@ -184,141 +324,8 @@ function detectCollisionBetweenRectAndBall(brique, ball) {
 
     }
     return [];
-    // return false;
-}
-/**
- * gere les collision de la balle avec les briques et la barre de rebond
- * @param {briqes} briques la liste des brique a test 
- */
-function collide(briques) {
-    //si la balle touche plusieur brique en meme temps sa risque d'inverser plusieur fois sa direction et finalement sa va rien changer
-    // donc changement possible que 1 fois
-    var ballereverseX = false;
-    var ballereverseY = false;
-
-    //teste pour toute les briques
-    //for parce que je retire les brique qui ont une collision et avec foreach sa en saute apres en avoir retiré
-    for (let index = 0; index < briques.length; index++) {
-        const brique = briques[index];
-        const [distX, distY] = detectCollisionBetweenRectAndBall(brique, balle);
-
-        //si j'ai une collision
-        //inverse direction de la balle
-        if (distX != undefined) {
-
-            if (distY == 0 || distX == 0) {
-                if (distY == 0 && !ballereverseX) {
-                    balle.vx = -balle.vx;
-                    ballereverseX = true;
-                }
-                if (distX == 0 && !ballereverseY) {
-                    balle.vy = -balle.vy;
-                    ballereverseY = true;
-                }
-            }
-            //sa arrive quand la balle est vers un angle d'une brique
-            else {
-                //la balle à plutot touché droite/ gauche
-                if ((distX * distX) > (distY * distY) && !ballereverseX) {
-                    balle.vx = -balle.vx;
-                    ballereverseX = true;
-                }
-                //la balle à plutot touché le top/bot
-                else if ((distX * distX) < (distY * distY) && !ballereverseY) {
-                    balle.vy = -balle.vy;
-                    ballereverseY = true;
-                }
-                else {
-                    //la balle a touché un angle niquel
-                    balle.vx = -balle.vx;
-                    balle.vy = -balle.vy;
-                    ballereverseX = true;
-                    ballereverseY = true;
-                }
-            }
-
-            switch (brique.niveau) {
-                case "lvl1":
-                    briques.splice(index, 1);
-                    index--;
-                    break;
-                case "lvl2":
-                    brique.niveau = "lvl1";
-                    break;
-                case "lvl3":
-                    brique.niveau = "lvl2";
-                    break;
-
-                default:
-                    break;
-            }
-
-
-        }
-    }
 }
 
-
-
-function collisionBarre() {
-    const brique = barre;
-
-    var testX = balle.x;
-    var testY = balle.y;
-
-    if (balle.x < brique.x)
-        //viens de la gauche
-        testX = brique.x;
-    else if (balle.x > brique.x + brique.w)
-        //vien de la droite
-        testX = brique.x + brique.w;
-
-    if (balle.y < brique.y)
-        //viens du haut 
-        testY = brique.y;
-    else if (balle.y > brique.y + brique.h)
-        //viens du bas
-        testY = brique.y + brique.h
-
-    //0 veut dire que c'est dedans
-    var distX = balle.x - testX;// +  arrive de la droite  / - arrive de la gauche
-    var distY = balle.y - testY;//+ arrive du bas / - arrive du haut
-
-    var distance = Math.sqrt((distX * distX) + (distY * distY));
-    if (distance <= balle.r) {
-
-        if (distY == 0 || distX == 0) {
-            if (distY == 0) {
-                balle.vx = -balle.vx;
-
-            }
-            if (distX == 0) {
-                balle.vy = -balle.vy;
-
-            }
-        }
-        //sa arrive quand la balle est vers un angle d'une brique
-        else {
-            //la balle à plutot touché droite/ gauche
-            if ((distX * distX) > (distY * distY)) {
-                balle.vx = -balle.vx;
-
-            }
-            //la balle à plutot touché le top/bot
-            else if ((distX * distX) < (distY * distY)) {
-                balle.vy = -balle.vy;
-
-            }
-            else {
-                //la balle a touché un angle niquel
-                balle.vx = -balle.vx;
-                balle.vy = -balle.vy;
-
-            }
-
-        }
-    }
-}
 
 /**
  * les event pour deplacer la barre
@@ -330,21 +337,42 @@ canvas.addEventListener('mousemove', e => {
     if (!(e.clientX - barre.w / 2 <= 0 || e.clientX + barre.w / 2 >= canvas.width)) {
         barre.x = e.clientX - barre.w / 2;
     }
+});
 
-}
-
-);
+document.addEventListener("ballePerdue", () => {
+    console.log("ballePerdue");
+})
+var startPress;
 document.addEventListener("keydown", e => {
+    if (startPress === undefined)
+        startPress = e.timeStamp
+
+    const secondsPassed = (e.timeStamp - startPress) / 1000;
+    startPress = e.timeStamp;
+
     if (e.key == "ArrowRight") {
-        barre.mouvement(true);
+
+barre.mouvement(true)
+       // barre.mouvement(true, secondsPassed);
     }
     if (e.key == "ArrowLeft") {
         barre.mouvement(false);
+      //  barre.mouvement(false, secondsPassed);
     }
     //space bar
     if (e.key == " ") {
         balle.vx == 0 ? balle.vx = 100 : balle.vx = balle.vx;
         balle.vy == 0 ? balle.vy = 200 : balle.vy = balle.vy;
+    }
+});
+
+document.addEventListener("keyup", e => {
+    if (e.key == "ArrowRight") {
+        startPress = undefined;
+
+    }
+    if (e.key == "ArrowLeft") {
+        startPress = undefined
     }
 })
 
