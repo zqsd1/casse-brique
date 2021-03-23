@@ -1,10 +1,12 @@
 class Balle {
     constructor(x, y/*TODO canvasAssocie*/) {
-        this.radius = 10;
+        this.r = 10;
         this.x = x;
         this.y = y;
-        this.vx = 100;
-        this.vy = 200;
+        this.vx = 0;
+        this.vy = 0;
+        //si la balle touche plusieur brique en meme temps sa risque d'inverser plusieur fois sa direction et finalement sa va rien changer
+        // donc changement possible que 1 fois
         this.isVxModified = false;
         this.isVyModified = false;
 
@@ -31,6 +33,10 @@ class Balle {
 
     }
 
+    start(){
+        this.vx = 100;
+        this.vy = 200
+    }
     mouvement(secondsPassed) {
         this.isVxModified = false;
         this.isVyModified = false;
@@ -48,7 +54,7 @@ class Balle {
             //TODO
             // canvas.dispatchEvent(eventBallePerdue);
 
-            this.inverserY();
+            this.inverserVy();
 
         }
     }
@@ -57,11 +63,11 @@ class Balle {
 class Rectangle {
 
     constructor(x, y, w, h, color) {
-        this.x;
-        this.y;
-        this.w;
-        this.h;
-        this.color;
+        this.x =x;
+        this.y = y;
+        this.w=w;
+        this.h=h;
+        this.color = color;
     }
 
 }
@@ -81,12 +87,12 @@ class Brique extends Rectangle {
 }
 class Barre extends Rectangle {
 
-    constructor(x, y, w, h, color, canvas) {
-        super(x, y, w, h, color)
+    constructor(w,h,color, canvas) {
+        super(canvas.width/2-w/2, canvas.height-3*h,w,h,color)
 
         this.maxX = canvas.width;
 
-        this.vx = 500;
+        this.vx = 100;
     }
     mouvement(isDirRight = true, secondsPassed) {
         //test si ça deborde pas du canvas

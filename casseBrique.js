@@ -1,8 +1,8 @@
 var canvas;
 var ctx;
-//var secondsPassed = 0;
+
 var secondsPassedFix = 0
-var oldTimeStamp = 0;
+var oldTimeStamp //= 0;
 var nbBriqueX = 15;
 var nbBriqueY = 30;
 //TODO 1config par lvl?
@@ -38,76 +38,10 @@ var briques = [
 
 ];
 
-var barre = {
-    w: 200,
-    h: 10,
-    color: "red",
-    /**
-     * w et h sont lié au canvas
-     */
-    x: 600 / 2 - 200 / 2,
-    y: 800 - 3 * 10,
-    vx: 500,
-    mouvement: function (droite = true/*,secondsPassed*/) {
-
-        //test si ça deborde pas du canvas
-        if (droite ? this.x + this.w < canvas.width : this.x > 0) {
-            droite ? this.x += this.vx * secondsPassedFix : this.x -= this.vx * secondsPassedFix;
-
-        }
-    }
-}
 const eventBallePerdue = new CustomEvent("ballePerdue", {
     bubbles: true
 });
 
-
-var balle = {
-    r: 10,
-    x: 250,
-    y: 760,
-    vx: 0,
-    vy: 0,
-
-    //si la balle touche plusieur brique en meme temps sa risque d'inverser plusieur fois sa direction et finalement sa va rien changer
-    // donc changement possible que 1 fois
-    isVxModif: false,
-    isVyModif: false,
-    inverseX: function () {
-        if (!this.isVxModif) {
-            this.vx = -this.vx;
-            this.isVxModif = true;
-        }
-    },
-    inverseY: function () {
-        if (!this.isVyModif) {
-            this.vy = -this.vy;
-            this.isVyModif = true;
-        }
-    },
-
-    mouvement: function (secondsPassed) {
-        this.isVxModif = false;
-        this.isVyModif = false;
-
-        this.x += this.vx * secondsPassed;
-        this.y += this.vy * secondsPassed;
-
-        if (this.x > canvas.width || this.x < 0) {
-            //this.vx = -this.vx;
-            this.inverseX();
-        }
-
-        if (this.y > canvas.height || this.y < 0) {
-            //TODO si la balle touche en bas vitesse =0 et position = sur la barre
-
-            canvas.dispatchEvent(eventBallePerdue);
-
-            this.inverseY();
-            //this.vy = -this.vy;
-        }
-    }
-}
 //TODO tableau vide = game over
 //TODO nb vie => balle touche bas = -1 vie /vie = 0 game over
 
@@ -123,16 +57,20 @@ const lvl3 = [{ "x": 3, "y": 3 }, { "x": 4, "y": 3 }, { "x": 5, "y": 3 }, { "x":
 
 
 init();
+var balle = new Balle(250,760);
+var barre = new Barre(200,10,"red",canvas)
+
 
 function init() {
-
+    
     canvas = document.getElementById("canvas");
     if (canvas.getContext) {
         ctx = canvas.getContext("2d");
-
+        
     }
     window.requestAnimationFrame(loop)
 }
+
 /**
  * fait dessiner le canvas avec une notion temporelle
  * @param {timeStamp} timeStamp 
@@ -145,13 +83,13 @@ function loop(timeStamp) {
     const secondsPassed = (timeStamp - oldTimeStamp) / 1000;
     oldTimeStamp = timeStamp;
     //FIXME gauche droite clavier pour la barre
-    secondsPassedFix = secondsPassed;
+   // secondsPassedFix = secondsPassed;
 
     balle.mouvement(secondsPassed);
 
     collide(balle.y > canvas.height * config.dimension.hauteurJeux ? [barre] : briques);
 
-    // collide(balle.y > 2 * canvas.height / 3 ? [barre] : briques);
+    
     draw();
     window.requestAnimationFrame(loop);
 }
@@ -187,17 +125,6 @@ function draw() {
 
 }
 
-//charge les brique du niveau dans le tableau de brique a dessiner
-// lvl3.forEach(element => {
-//     briques.push(
-//         {
-//             x: element.x * canvas.width / nbBriqueX,
-//             y: element.y * canvas.height / nbBriqueY,
-//             w: canvas.width / nbBriqueX,
-//             h: canvas.height / nbBriqueY,
-
-//         })
-// });
 
 lvl4.forEach(element => {
     briques.push(
@@ -231,39 +158,32 @@ function collide(briques) {
 
             if (distY == 0 || distX == 0) {
                 if (distY == 0 && !balle.isVxModif) {
-                    balle.inverseX();
-                    //     balle.vx = -balle.vx;
-                    //     ballereverseX = true;
+                    balle.inverserVx();
+
                 }
                 if (distX == 0 && !balle.isVyModif) {
-                    balle.inverseY();
-                    // balle.vy = -balle.vy;
-                    //ballereverseY = true;
+                    balle.inverserVy();
+
                 }
             }
             //sa arrive quand la balle est vers un angle d'une brique
             else {
                 //la balle à plutot touché droite/ gauche
                 if ((distX * distX) > (distY * distY) && !balle.isVxModif) {
-                    balle.inverseX();
-                    // balle.vx = -balle.vx;
-                    //ballereverseX = true;
+                    balle.inverserVx();
+
                 }
                 //la balle à plutot touché le top/bot
                 else if ((distX * distX) < (distY * distY) && !balle.isVyModif) {
-                    balle.inverseY();
-                    //balle.vy = -balle.vy;
-                    //ballereverseY = true;
+                    balle.inverserVy();
+
                 }
                 else {
                     //la balle a touché un angle niquel
 
-                    balle.inverseX();
-                    balle.inverseY();
-                    //balle.vx = -balle.vx;
-                    //balle.vy = -balle.vy;
-                    //ballereverseX = true;
-                    //ballereverseY = true;
+                    balle.inverserVx();
+                    balle.inverserVy();
+
                 }
             }
 
@@ -343,20 +263,21 @@ document.addEventListener("ballePerdue", () => {
     console.log("ballePerdue");
 })
 var startPress;
+//TODO ecart max ?
 document.addEventListener("keydown", e => {
     if (startPress === undefined)
         startPress = e.timeStamp
 
-    const secondsPassed = (e.timeStamp - startPress) / 1000;
+    const secondsPassed2 = (e.timeStamp - startPress) / 1000;
     startPress = e.timeStamp;
 
     if (e.key == "ArrowRight") {
 
-barre.mouvement(true)
+barre.mouvement(true,secondsPassed2)
        // barre.mouvement(true, secondsPassed);
     }
     if (e.key == "ArrowLeft") {
-        barre.mouvement(false);
+        barre.mouvement(false,secondsPassed2);
       //  barre.mouvement(false, secondsPassed);
     }
     //space bar
@@ -368,11 +289,11 @@ barre.mouvement(true)
 
 document.addEventListener("keyup", e => {
     if (e.key == "ArrowRight") {
-        startPress = undefined;
+       // startPress = undefined;
 
     }
     if (e.key == "ArrowLeft") {
-        startPress = undefined
+       // startPress = undefined
     }
 })
 
