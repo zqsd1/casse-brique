@@ -83,7 +83,76 @@ var balle = {
             this.vy = -this.vy;
 
         }
+    },
+
+    /**
+     * verifie si il y a une collision entre la balle et le rectangle 
+     * si oui call function
+     * @param {brique} brique le rectangle à test
+     * @param {balle} ball la balle testé
+     * @callback ifCollisionCallBack fonction appelé si il y a une collision
+     * @returns {boolean}
+     */
+    isCollisionWithBrique: function (brique, ifCollisionCallBack) {
+
+        var testX = this.x;
+        var testY = this.y;
+
+        if (this.x < brique.x)
+            //viens de la gauche
+            testX = brique.x;
+        else if (this.x > brique.x + brique.w)
+            //vien de la droite
+            testX = brique.x + brique.w;
+
+        if (this.y < brique.y)
+            //viens du haut 
+            testY = brique.y;
+        else if (this.y > brique.y + brique.h)
+            //viens du bas
+            testY = brique.y + brique.h
+
+        //0 veut dire que c'est dedans
+        var distX = this.x - testX;// +  arrive de la droite  / - arrive de la gauche
+        var distY = this.y - testY;//+ arrive du bas / - arrive du haut
+
+
+        //pytagore
+        var distance = Math.sqrt((distX * distX) + (distY * distY));
+        //collision détecté
+        if (distance <= this.r) {
+            ifCollisionCallBack(distX, distY);
+            return true;
+
+        }
+        return false;
+    },
+
+
+    /**
+     * inverse la direction x et/ou y de la balle quand il y a collision
+     * @param {number} distX 
+     * @param {number} distY 
+     */
+    changerDirectionAfterCollide: function (distX, distY) {
+
+        //la balle à plutot touché droite/ gauche
+        if ((distX * distX) > (distY * distY)) {
+            balle.inverserVx();
+        }
+        //la balle à plutot touché le top/bot
+        if ((distX * distX) < (distY * distY)) {
+            balle.inverserVy()
+        }
+        //la balle a touché un angle niquel
+        if ((distX * distX) == (distY * distY)) {
+            balle.inverserVx();
+            balle.inverserVy();
+        }
+
     }
+
+
 }
 
 /**
@@ -184,7 +253,7 @@ lvl4.forEach(element => {
  * @callback ifCollisionCallBack fonction appelé si il y a une collision
  * @returns {boolean}
  */
-function detectCollisionBetweenRectAndBall(brique, ball, ifCollisionCallBack) {
+function isCollisionBetweenRectAndBall(brique, ball, ifCollisionCallBack) {
 
     var testX = ball.x;
     var testY = ball.y;
@@ -249,7 +318,7 @@ function changerDirectionBalleAfterCollide(distX, distY) {
 function damageBrique(brique) {
     switch (brique.niveau) {
         case "lvl1":
-                       
+
             //TODO event kill brick
             break;
         case "lvl2":
@@ -273,10 +342,12 @@ function collide(briques) {
     //for parce que je retire les brique qui ont une collision et avec foreach sa en saute apres en avoir retiré
     for (let index = 0; index < briques.length; index++) {
         const brique = briques[index];
+       const isCollision = balle.isCollisionWithBrique(brique,balle.changerDirectionAfterCollide);
+
         //  const [distX, distY] = detectCollisionBetweenRectAndBall(brique, balle);
-        const isCollision = detectCollisionBetweenRectAndBall(brique, balle, changerDirectionBalleAfterCollide);
+        ///const isCollision = isCollisionBetweenRectAndBall(brique, balle, changerDirectionBalleAfterCollide);
         // if (isCollision) {
-            //TODO promise ? async ?
+        //TODO promise ? async ?
         //     damageBrique(brique);
         // }
 
