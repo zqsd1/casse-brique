@@ -5,7 +5,7 @@ var oldTimeStamp = 0;
 var nbBriqueX = 15;
 var nbBriqueY = 30
 var briques = [
-    
+
 ];
 
 document.onload = init()
@@ -19,6 +19,8 @@ function init() {
     }
     window.requestAnimationFrame(loop)
 }
+
+
 var barre = {
     w: 200,
     h: 10,
@@ -29,10 +31,10 @@ var barre = {
     x: (canvas.width / 2 - 200 / 2),
     y: (canvas.height - 3 * 10),
     vx: 500,
-    mouvement: function (droite = true) {
+    mouvement: function (isDirDoite = true) {
         //test si ça deborde pas du canvas
-        if (droite ? this.x + this.w < canvas.width : this.x > 0) {
-            droite ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
+        if (isDirDoite ? this.x + this.w < canvas.width : this.x > 0) {
+            isDirDoite ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
         }
     }
 }
@@ -43,20 +45,43 @@ var balle = {
     y: 760,
     vx: 0,
     vy: 0,
+
+    //si la balle touche plusieur brique en meme temps sa risque d'inverser plusieur fois sa direction et finalement sa va rien changer
+    // donc changement possible que 1 fois
+
+    isVxReversed: false,
+    isVyReversed: false,
     mouvement: function () {
+
+        this.isVxinversed = false;
+        this.isVyinversed = false;
 
         this.x += this.vx * secondsPassed;
         this.y += this.vy * secondsPassed;
 
         if (this.x > canvas.width || this.x < 0) {
+            this.inverserVx();
+            //this.vx = -this.vx;
 
-            this.vx = -this.vx;
         }
 
         if (this.y > canvas.height || this.y < 0) {
+            this.inverserVy();
+            //this.vy = -this.vy;
+        }
+    },
+    inverserVx: function () {
+        if (!this.isVxinversed) {
+            this.isVxinversed = true
+            this.vx = -this.vx;
 
-
+        }
+    },
+    inverserVy: function () {
+        if (!this.isVyinversed) {
+            this.isVyinversed = true;
             this.vy = -this.vy;
+
         }
     }
 }
@@ -84,13 +109,15 @@ const config = {
  * @param {timeStamp} timeStamp 
  */
 function loop(timeStamp) {
+    window.requestAnimationFrame(loop);//best practice says MDN
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
     oldTimeStamp = timeStamp;
+
     balle.mouvement();
 
     collide(balle.y > 2 * canvas.height / 3 ? [barre] : briques);
+
     draw();
-    window.requestAnimationFrame(loop);
 }
 
 /**
@@ -148,13 +175,16 @@ lvl4.forEach(element => {
     )
 })
 
+
 /**
- * dit si il y a une collision entre 2 element du canvas
- * @param {briques} brique 
- * @param {balle} ball 
- * @returns ecart x et y ou false
+ * verifie si il y a une collision entre la balle et le rectangle 
+ * si oui call function
+ * @param {brique} brique le rectangle à test
+ * @param {balle} ball la balle testé
+ * @callback ifCollisionCallBack fonction appelé si il y a une collision
+ * @returns {boolean}
  */
-function detectCollisionBetweenRectAndBall(brique, ball) {
+function detectCollisionBetweenRectAndBall(brique, ball, ifCollisionCallBack) {
 
     var testX = ball.x;
     var testY = ball.y;
@@ -177,66 +207,81 @@ function detectCollisionBetweenRectAndBall(brique, ball) {
     var distX = ball.x - testX;// +  arrive de la droite  / - arrive de la gauche
     var distY = ball.y - testY;//+ arrive du bas / - arrive du haut
 
+
+    //pytagore
     var distance = Math.sqrt((distX * distX) + (distY * distY));
     //collision détecté
     if (distance <= ball.r) {
-        return [distX, distY];
+        ifCollisionCallBack(distX, distY)
+        //return [distX, distY];
+        return true;
 
     }
-    return [];
-    // return false;
+
+    // return [];
+    return false;
+}
+
+
+/**
+ * inverse la direction x et/ou y de la balle quand il y a collision
+ * @param {number} distX 
+ * @param {number} distY 
+ */
+function changerDirectionBalleAfterCollide(distX, distY) {
+
+    //la balle à plutot touché droite/ gauche
+    if ((distX * distX) > (distY * distY)) {
+        balle.inverserVx();
+    }
+    //la balle à plutot touché le top/bot
+    if ((distX * distX) < (distY * distY)) {
+        balle.inverserVy()
+    }
+    //la balle a touché un angle niquel
+    if ((distX * distX) == (distY * distY)) {
+        balle.inverserVx();
+        balle.inverserVy();
+    }
+
+}
+
+function damageBrique(brique) {
+    switch (brique.niveau) {
+        case "lvl1":
+                       
+            //TODO event kill brick
+            break;
+        case "lvl2":
+            brique.niveau = "lvl1";
+            break;
+        case "lvl3":
+            brique.niveau = "lvl2";
+            break;
+
+        default:
+            break;
+    }
 }
 /**
  * gere les collision de la balle avec les briques et la barre de rebond
- * @param {briqes} briques la liste des brique a test 
+ * @param {briques} briques la liste des brique a test 
  */
 function collide(briques) {
-    //si la balle touche plusieur brique en meme temps sa risque d'inverser plusieur fois sa direction et finalement sa va rien changer
-    // donc changement possible que 1 fois
-    var ballereverseX = false;
-    var ballereverseY = false;
 
     //teste pour toute les briques
     //for parce que je retire les brique qui ont une collision et avec foreach sa en saute apres en avoir retiré
     for (let index = 0; index < briques.length; index++) {
         const brique = briques[index];
-        const [distX, distY] = detectCollisionBetweenRectAndBall(brique, balle);
+        //  const [distX, distY] = detectCollisionBetweenRectAndBall(brique, balle);
+        const isCollision = detectCollisionBetweenRectAndBall(brique, balle, changerDirectionBalleAfterCollide);
+        // if (isCollision) {
+            //TODO promise ? async ?
+        //     damageBrique(brique);
+        // }
 
-        //si j'ai une collision
-        //inverse direction de la balle
-        if (distX != undefined) {
 
-            if (distY == 0 || distX == 0) {
-                if (distY == 0 && !ballereverseX) {
-                    balle.vx = -balle.vx;
-                    ballereverseX = true;
-                }
-                if (distX == 0 && !ballereverseY) {
-                    balle.vy = -balle.vy;
-                    ballereverseY = true;
-                }
-            }
-            //sa arrive quand la balle est vers un angle d'une brique
-            else {
-                //la balle à plutot touché droite/ gauche
-                if ((distX * distX) > (distY * distY) && !ballereverseX) {
-                    balle.vx = -balle.vx;
-                    ballereverseX = true;
-                }
-                //la balle à plutot touché le top/bot
-                else if ((distX * distX) < (distY * distY) && !ballereverseY) {
-                    balle.vy = -balle.vy;
-                    ballereverseY = true;
-                }
-                else {
-                    //la balle a touché un angle niquel
-                    balle.vx = -balle.vx;
-                    balle.vy = -balle.vy;
-                    ballereverseX = true;
-                    ballereverseY = true;
-                }
-            }
-
+        if (isCollision) {
             switch (brique.niveau) {
                 case "lvl1":
                     briques.splice(index, 1);
@@ -253,72 +298,13 @@ function collide(briques) {
                     break;
             }
 
-
         }
+
+
+
     }
 }
 
-
-
-function collisionBarre() {
-    const brique = barre;
-
-    var testX = balle.x;
-    var testY = balle.y;
-
-    if (balle.x < brique.x)
-        //viens de la gauche
-        testX = brique.x;
-    else if (balle.x > brique.x + brique.w)
-        //vien de la droite
-        testX = brique.x + brique.w;
-
-    if (balle.y < brique.y)
-        //viens du haut 
-        testY = brique.y;
-    else if (balle.y > brique.y + brique.h)
-        //viens du bas
-        testY = brique.y + brique.h
-
-    //0 veut dire que c'est dedans
-    var distX = balle.x - testX;// +  arrive de la droite  / - arrive de la gauche
-    var distY = balle.y - testY;//+ arrive du bas / - arrive du haut
-
-    var distance = Math.sqrt((distX * distX) + (distY * distY));
-    if (distance <= balle.r) {
-
-        if (distY == 0 || distX == 0) {
-            if (distY == 0) {
-                balle.vx = -balle.vx;
-
-            }
-            if (distX == 0) {
-                balle.vy = -balle.vy;
-
-            }
-        }
-        //sa arrive quand la balle est vers un angle d'une brique
-        else {
-            //la balle à plutot touché droite/ gauche
-            if ((distX * distX) > (distY * distY)) {
-                balle.vx = -balle.vx;
-
-            }
-            //la balle à plutot touché le top/bot
-            else if ((distX * distX) < (distY * distY)) {
-                balle.vy = -balle.vy;
-
-            }
-            else {
-                //la balle a touché un angle niquel
-                balle.vx = -balle.vx;
-                balle.vy = -balle.vy;
-
-            }
-
-        }
-    }
-}
 
 /**
  * les event pour deplacer la barre
