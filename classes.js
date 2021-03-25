@@ -17,6 +17,14 @@ class Balle {
 
     }
 
+    draw(ctx){
+        ctx.beginPath();
+        ctx.save();
+        ctx.fillStyle = "black";
+        ctx.arc(balle.x, balle.y, balle.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+    }
     //TODO find a way to =>inverseV(param){isV$modified}     wildcard
     inverserVx() {
         if (!this.isVxModified) {
@@ -77,6 +85,14 @@ class Brique extends Rectangle {
         this.pv;
 
     }
+    draw(ctx){
+        ctx.beginPath();
+        ctx.save();
+        ctx.rect(brique.x, brique.y, brique.w, brique.h);
+        ctx.fillStyle = config.difficulte[brique.niveau];
+        ctx.fill();
+        ctx.restore();
+    }
 
     hit() {
         return this.pv--;
@@ -99,5 +115,13 @@ class Barre extends Rectangle {
         if (isDirRight ? this.x + this.w < this.maxX : this.x > 0) {
             isDirRight ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
         }
+    }
+
+    draw(ctx){
+        ctx.beginPath();
+        ctx.save();
+        ctx.fillStyle = barre.color;
+        ctx.fillRect(barre.x, barre.y, barre.w, barre.h);
+        ctx.restore();
     }
 }

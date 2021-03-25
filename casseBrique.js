@@ -76,6 +76,7 @@ function init() {
  * @param {timeStamp} timeStamp 
  */
 function loop(timeStamp) {
+    window.requestAnimationFrame(loop);
     //pour faire les deplacement par rapport au temps
     if (oldTimeStamp === undefined)
         oldTimeStamp = timeStamp
@@ -91,7 +92,6 @@ function loop(timeStamp) {
 
     
     draw();
-    window.requestAnimationFrame(loop);
 }
 
 /**
