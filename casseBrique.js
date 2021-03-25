@@ -8,6 +8,8 @@ var briques = [
 
 ];
 
+
+
 document.onload = init()
 
 function init() {
@@ -36,6 +38,11 @@ var barre = {
         if (isDirDoite ? this.x + this.w < canvas.width : this.x > 0) {
             isDirDoite ? this.x += this.vx * secondsPassed : this.x -= this.vx * secondsPassed;
         }
+    },
+    draw: function (params) {
+        ctx.beginPath();
+        ctx.fillStyle = this.color;
+        ctx.fillRect(this.x, this.y, this.w, this.h);
     }
 }
 
@@ -51,6 +58,13 @@ var balle = {
 
     isVxReversed: false,
     isVyReversed: false,
+
+    draw: function (params) {
+        ctx.beginPath();
+        ctx.fillStyle = "black";
+        ctx.arc(balle.x, balle.y, balle.r, 0, Math.PI * 2);
+        ctx.fill();
+    },
     mouvement: function () {
 
         this.isVxinversed = false;
@@ -180,8 +194,10 @@ const config = {
 function loop(timeStamp) {
     window.requestAnimationFrame(loop);//best practice says MDN
     secondsPassed = (timeStamp - oldTimeStamp) / 1000;
-    oldTimeStamp = timeStamp;
 
+    //if (secondsPassed < 1 / 2) return;// limite a 2 draw/sec
+
+    oldTimeStamp = timeStamp;
     balle.mouvement();
 
     collide(balle.y > 2 * canvas.height / 3 ? [barre] : briques);
@@ -207,30 +223,12 @@ function draw() {
         ctx.restore();
     });
 
-    //dessine la balle
-    ctx.beginPath();
-    ctx.fillStyle = "black";
-    ctx.arc(balle.x, balle.y, balle.r, 0, Math.PI * 2);
-    ctx.fill();
+    balle.draw();
+    barre.draw();
 
-    //dessine la barre
-    ctx.beginPath();
-    ctx.fillStyle = barre.color;
-    ctx.fillRect(barre.x, barre.y, barre.w, barre.h);
 
 }
 
-//charge les brique du niveau dans le tableau de brique a dessiner
-// lvl3.forEach(element => {
-//     briques.push(
-//         {
-//             x: element.x * canvas.width / nbBriqueX,
-//             y: element.y * canvas.height / nbBriqueY,
-//             w: canvas.width / nbBriqueX,
-//             h: canvas.height / nbBriqueY,
-
-//         })
-// });
 
 lvl4.forEach(element => {
     briques.push(
@@ -245,93 +243,7 @@ lvl4.forEach(element => {
 })
 
 
-/**
- * verifie si il y a une collision entre la balle et le rectangle 
- * si oui call function
- * @param {brique} brique le rectangle à test
- * @param {balle} ball la balle testé
- * @callback ifCollisionCallBack fonction appelé si il y a une collision
- * @returns {boolean}
- */
-function isCollisionBetweenRectAndBall(brique, ball, ifCollisionCallBack) {
 
-    var testX = ball.x;
-    var testY = ball.y;
-
-    if (ball.x < brique.x)
-        //viens de la gauche
-        testX = brique.x;
-    else if (ball.x > brique.x + brique.w)
-        //vien de la droite
-        testX = brique.x + brique.w;
-
-    if (ball.y < brique.y)
-        //viens du haut 
-        testY = brique.y;
-    else if (ball.y > brique.y + brique.h)
-        //viens du bas
-        testY = brique.y + brique.h
-
-    //0 veut dire que c'est dedans
-    var distX = ball.x - testX;// +  arrive de la droite  / - arrive de la gauche
-    var distY = ball.y - testY;//+ arrive du bas / - arrive du haut
-
-
-    //pytagore
-    var distance = Math.sqrt((distX * distX) + (distY * distY));
-    //collision détecté
-    if (distance <= ball.r) {
-        ifCollisionCallBack(distX, distY)
-        //return [distX, distY];
-        return true;
-
-    }
-
-    // return [];
-    return false;
-}
-
-
-/**
- * inverse la direction x et/ou y de la balle quand il y a collision
- * @param {number} distX 
- * @param {number} distY 
- */
-function changerDirectionBalleAfterCollide(distX, distY) {
-
-    //la balle à plutot touché droite/ gauche
-    if ((distX * distX) > (distY * distY)) {
-        balle.inverserVx();
-    }
-    //la balle à plutot touché le top/bot
-    if ((distX * distX) < (distY * distY)) {
-        balle.inverserVy()
-    }
-    //la balle a touché un angle niquel
-    if ((distX * distX) == (distY * distY)) {
-        balle.inverserVx();
-        balle.inverserVy();
-    }
-
-}
-
-function damageBrique(brique) {
-    switch (brique.niveau) {
-        case "lvl1":
-
-            //TODO event kill brick
-            break;
-        case "lvl2":
-            brique.niveau = "lvl1";
-            break;
-        case "lvl3":
-            brique.niveau = "lvl2";
-            break;
-
-        default:
-            break;
-    }
-}
 /**
  * gere les collision de la balle avec les briques et la barre de rebond
  * @param {briques} briques la liste des brique a test 
@@ -342,7 +254,7 @@ function collide(briques) {
     //for parce que je retire les brique qui ont une collision et avec foreach sa en saute apres en avoir retiré
     for (let index = 0; index < briques.length; index++) {
         const brique = briques[index];
-       const isCollision = balle.isCollisionWithBrique(brique,balle.changerDirectionAfterCollide);
+        const isCollision = balle.isCollisionWithBrique(brique, balle.changerDirectionAfterCollide);
 
         //  const [distX, distY] = detectCollisionBetweenRectAndBall(brique, balle);
         ///const isCollision = isCollisionBetweenRectAndBall(brique, balle, changerDirectionBalleAfterCollide);
@@ -393,6 +305,10 @@ canvas.addEventListener('mousemove', e => {
 );
 document.addEventListener("keydown", e => {
     if (e.key == "ArrowRight") {
+
+
+
+
         barre.mouvement(true);
     }
     if (e.key == "ArrowLeft") {
@@ -405,3 +321,22 @@ document.addEventListener("keydown", e => {
     }
 })
 
+
+        //////////////
+        // const SPEED = 2
+        // let lastRenderTime = 0;
+        // function main(time) {
+        //     window.requestAnimationFrame(main);
+        //     const secSincelastRender = (time - lastRenderTime) / 1000;
+        //     if (secSincelastRender < 1 / SPEED) return
+
+        //     console.log("render");
+        //     lastRenderTime = time
+        // }
+        // //////////////
+        // ////////////
+        // for (let index = briques.length - 2; index >= 0; index--) {
+        //     const element = briques[index];
+        //     briques[index + 1] = { ...brique[index] }//duplicate the elem
+        // }
+        ///////////
