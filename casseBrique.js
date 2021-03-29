@@ -119,11 +119,14 @@ var balle = {
 
         }
 
-        if (this.y > canvas.height || this.y < 0) {
+        if ( this.y < 0) {
 
             
             this.inverserVy();
 
+        }
+        if (this.y>canvas.height) {
+            ballePerdue();
         }
     },
     inverserVx: function () {
@@ -214,6 +217,12 @@ var balle = {
 
 }
 
+function ballePerdue(){
+    balle.vx = 0
+    balle.vy = 0
+    balle.x = barre.x + barre.w/2
+    balle.y = barre.y - balle.r
+}
 
 /** */
 function Brique(x, y, pv) {
