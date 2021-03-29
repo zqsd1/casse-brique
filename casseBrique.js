@@ -120,6 +120,8 @@ var balle = {
         }
 
         if (this.y > canvas.height || this.y < 0) {
+
+            
             this.inverserVy();
 
         }
@@ -211,6 +213,8 @@ var balle = {
 
 
 }
+
+
 /** */
 function Brique(x, y, pv) {
 
@@ -312,6 +316,13 @@ function collide(briques) {
 
 }
 
+function moveBalleAvecBarre() {
+ if (balle.vx== 0 &&balle.vy ==0) {
+     balle.x = barre.x +barre.w/2
+     balle.y = barre.y -balle.r;
+ }   
+}
+
 /**
  * les event pour deplacer la barre
  * si on deplace la souris dans le canvas
@@ -321,6 +332,7 @@ canvas.addEventListener('mousemove', e => {
     //la souris est au milieu de la barre et il faut verifier que la barre va pas deborder
     if (!(e.clientX - barre.w / 2 <= 0 || e.clientX + barre.w / 2 >= canvas.width)) {
         barre.x = e.clientX - barre.w / 2;
+        moveBalleAvecBarre()
     }
 
 }
@@ -329,9 +341,12 @@ canvas.addEventListener('mousemove', e => {
 document.addEventListener("keydown", e => {
     if (e.key == "ArrowRight") {
 
+        moveBalleAvecBarre()
         barre.mouvement(true);
+
     }
     if (e.key == "ArrowLeft") {
+        moveBalleAvecBarre()
         barre.mouvement(false);
     }
     //space bar
